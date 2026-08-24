@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# kakawa-b2b-portal
 
-## Getting Started
+B2B chocolate ordering portal for Kakawa Chocolates — wholesale/corporate customer catalog, tier + volume pricing, quote PDF generation, and customization request tracking, with an admin console for customer/tier/product/request management.
 
-First, run the development server:
+Build plan: see `docs/build-plan.md` (mirrors the plan approved 2026-08-24).
+
+## Stack
+
+- Next.js (App Router) + TypeScript + Tailwind
+- Supabase (Postgres, Auth, Storage) with Row Level Security
+- Vercel deployment
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy `.env.local.example` to `.env.local` and fill in Supabase credentials (never commit `.env.local` — it's gitignored).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` — local dev server
+- `npm run build` — production build (also type-checks)
+- `npm test` — pricing engine unit tests (Vitest)
+- `npm run scrape` — pull Kakawa's live Shopify catalog into `products` / `product_variants`
+- `npm run seed` — seed baseline pricing tiers + volume discounts (and optionally invite an admin via `SEED_ADMIN_EMAIL`)
 
-## Learn More
+### Database
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Schema + RLS policies live in `supabase/migrations/0001_init.sql`. Apply via the Supabase SQL Editor (or `supabase db push` once the project is linked).
