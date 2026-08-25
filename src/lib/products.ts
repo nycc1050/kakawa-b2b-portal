@@ -60,6 +60,25 @@ export async function listCategories(): Promise<string[]> {
   return [...unique].sort();
 }
 
+/** Lean id/title list for dropdowns (customization request form). */
+export async function listProductOptions(): Promise<
+  { id: string; title: string }[]
+> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("id, title")
+    .eq("is_b2b_visible", true)
+    .order("title", { ascending: true })
+    .returns<{ id: string; title: string }[]>();
+
+  if (error) {
+    console.error("listProductOptions failed:", error);
+    return [];
+  }
+  return data ?? [];
+}
+
 export async function getProduct(
   productId: string
 ): Promise<ProductWithVariants | null> {
