@@ -82,7 +82,13 @@ create table public.products (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create unique index products_shopify_id_uidx on public.products(shopify_product_id) where shopify_product_id is not null;
+-- Plain UNIQUE (not a partial index): Postgres treats NULLs as
+-- distinct under a unique constraint, so manually-added products with
+-- no shopify_product_id don't collide. A WHERE-qualified index would
+-- work too, but ON CONFLICT (shopify_product_id) can't target it
+-- without repeating that predicate, which supabase-js's upsert() has
+-- no way to express.
+alter table public.products add constraint products_shopify_id_key unique (shopify_product_id);
 
 create table public.product_variants (
   id uuid primary key default gen_random_uuid(),
@@ -96,7 +102,7 @@ create table public.product_variants (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create unique index variants_shopify_id_uidx on public.product_variants(shopify_variant_id) where shopify_variant_id is not null;
+alter table public.product_variants add constraint variants_shopify_id_key unique (shopify_variant_id);
 
 -- ============ customization_requests ============
 create table public.customization_requests (

@@ -7,8 +7,11 @@
  *
  * Usage: npm run seed
  */
-import "dotenv/config";
+import { config } from "dotenv";
 import { createAdminClient } from "../src/lib/supabase/admin";
+
+// tsx runs outside Next, which normally loads .env.local for us.
+config({ path: ".env.local" });
 
 async function main() {
   const supabase = createAdminClient();
