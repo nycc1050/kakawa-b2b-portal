@@ -2,17 +2,30 @@
 
 import { useMemo, useState } from "react";
 import { calcPrice, type Tier as PricingTier } from "@/lib/pricing";
+import { useQuote } from "@/lib/quote-context";
 import type { ProductVariant } from "@/types/database";
 
 interface VariantPricingProps {
+  productId: string;
+  productTitle: string;
+  productImageUrl: string | null;
   variants: ProductVariant[];
   tier: PricingTier | null;
   tierName: string | null;
 }
 
-export function VariantPricing({ variants, tier, tierName }: VariantPricingProps) {
+export function VariantPricing({
+  productId,
+  productTitle,
+  productImageUrl,
+  variants,
+  tier,
+  tierName,
+}: VariantPricingProps) {
+  const { addItem } = useQuote();
   const [variantId, setVariantId] = useState(variants[0]?.id ?? "");
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
 
   const variant = variants.find((v) => v.id === variantId) ?? variants[0];
   const breakdown = useMemo(
@@ -65,6 +78,27 @@ export function VariantPricing({ variants, tier, tierName }: VariantPricingProps
           This option is currently unavailable.
         </p>
       )}
+
+      <button
+        type="button"
+        disabled={!variant.is_available}
+        onClick={() => {
+          addItem({
+            productId,
+            productTitle,
+            productImageUrl,
+            variantId: variant.id,
+            variantTitle: variant.variant_title,
+            b2cPrice: variant.b2c_price,
+            quantity,
+          });
+          setAdded(true);
+          setTimeout(() => setAdded(false), 2000);
+        }}
+        className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {added ? "Added to quote ✓" : "Add to quote"}
+      </button>
 
       {tier ? (
         <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">

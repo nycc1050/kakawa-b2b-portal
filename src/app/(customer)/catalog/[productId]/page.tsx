@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getProduct } from "@/lib/products";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, toPricingTier } from "@/lib/auth";
 import { VariantPricing } from "@/components/catalog/VariantPricing";
-import type { Tier as PricingTier } from "@/lib/pricing";
 
 interface ProductPageProps {
   params: Promise<{ productId: string }>;
@@ -18,15 +17,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   if (!product) notFound();
 
-  const pricingTier: PricingTier | null = session?.tier
-    ? {
-        baseDiscountPercent: session.tier.base_discount_percent,
-        volumeDiscounts: session.volumeDiscounts.map((v) => ({
-          minQuantity: v.min_quantity,
-          additionalDiscountPercent: v.additional_discount_percent,
-        })),
-      }
-    : null;
+  const pricingTier = toPricingTier(
+    session?.tier ?? null,
+    session?.volumeDiscounts ?? []
+  );
 
   return (
     <div>
@@ -65,6 +59,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           <div className="mt-6">
             <VariantPricing
+              productId={product.id}
+              productTitle={product.title}
+              productImageUrl={product.image_url}
               variants={product.product_variants}
               tier={pricingTier}
               tierName={session?.tier?.name ?? null}

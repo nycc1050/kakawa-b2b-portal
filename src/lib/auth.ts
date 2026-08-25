@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Customer, Profile, Tier, VolumeDiscount } from "@/types/database";
+import type { Tier as PricingTier } from "@/lib/pricing";
 
 /**
  * Loads the current user's profile (+ customer/tier if applicable).
@@ -50,4 +51,19 @@ export async function getCurrentUser() {
   }
 
   return { profile, customer: customer ?? null, tier, volumeDiscounts };
+}
+
+/** Adapts DB tier + volume_discounts rows into lib/pricing.ts's plain shape. */
+export function toPricingTier(
+  tier: Tier | null,
+  volumeDiscounts: VolumeDiscount[]
+): PricingTier | null {
+  if (!tier) return null;
+  return {
+    baseDiscountPercent: tier.base_discount_percent,
+    volumeDiscounts: volumeDiscounts.map((v) => ({
+      minQuantity: v.min_quantity,
+      additionalDiscountPercent: v.additional_discount_percent,
+    })),
+  };
 }

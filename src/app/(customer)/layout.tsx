@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { Nav } from "@/components/shared/Nav";
 import { getCurrentUser } from "@/lib/auth";
+import { QuoteProvider } from "@/lib/quote-context";
 
 const CUSTOMER_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -22,9 +23,11 @@ export default async function CustomerLayout({
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <Nav title="Kakawa B2B" links={CUSTOMER_LINKS} />
-      <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
-    </div>
+    <QuoteProvider>
+      <div className="min-h-screen bg-neutral-50">
+        <Nav title="Kakawa B2B" links={CUSTOMER_LINKS} />
+        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+      </div>
+    </QuoteProvider>
   );
 }
