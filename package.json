@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "scrape": "tsx scripts/scrape-shopify.ts",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "create-test-customer": "tsx scripts/create-test-customer.ts"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.8.1",

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Customer, Profile, Tier } from "@/types/database";
+import type { Customer, Profile, Tier, VolumeDiscount } from "@/types/database";
 
 /**
  * Loads the current user's profile (+ customer/tier if applicable).
@@ -24,7 +24,7 @@ export async function getCurrentUser() {
   if (!profile) return null;
 
   if (profile.role === "admin") {
-    return { profile, customer: null, tier: null };
+    return { profile, customer: null, tier: null, volumeDiscounts: [] };
   }
 
   const { data: customer } = await supabase
@@ -34,14 +34,20 @@ export async function getCurrentUser() {
     .single<Customer>();
 
   let tier: Tier | null = null;
+  let volumeDiscounts: VolumeDiscount[] = [];
   if (customer?.tier_id) {
-    const { data } = await supabase
-      .from("tiers")
-      .select("*")
-      .eq("id", customer.tier_id)
-      .single<Tier>();
-    tier = data;
+    const [{ data: tierData }, { data: volData }] = await Promise.all([
+      supabase.from("tiers").select("*").eq("id", customer.tier_id).single<Tier>(),
+      supabase
+        .from("volume_discounts")
+        .select("*")
+        .eq("tier_id", customer.tier_id)
+        .order("min_quantity", { ascending: true })
+        .returns<VolumeDiscount[]>(),
+    ]);
+    tier = tierData;
+    volumeDiscounts = volData ?? [];
   }
 
-  return { profile, customer: customer ?? null, tier };
+  return { profile, customer: customer ?? null, tier, volumeDiscounts };
 }
