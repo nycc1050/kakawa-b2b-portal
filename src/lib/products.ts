@@ -99,3 +99,46 @@ export async function getProduct(
     ),
   };
 }
+
+/** All products regardless of visibility (admin-only via RLS). */
+export async function listAllProductsForAdmin(): Promise<ProductWithVariants[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, product_variants(*)")
+    .order("title", { ascending: true })
+    .returns<ProductWithVariants[]>();
+
+  if (error) {
+    console.error("listAllProductsForAdmin failed:", error);
+    return [];
+  }
+
+  return (data ?? []).map((p) => ({
+    ...p,
+    product_variants: [...p.product_variants].sort(
+      (a, b) => a.b2c_price - b.b2c_price
+    ),
+  }));
+}
+
+/** Single product regardless of visibility (admin-only via RLS). */
+export async function getProductForAdmin(
+  productId: string
+): Promise<ProductWithVariants | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, product_variants(*)")
+    .eq("id", productId)
+    .single<ProductWithVariants>();
+
+  if (error || !data) return null;
+
+  return {
+    ...data,
+    product_variants: [...data.product_variants].sort(
+      (a, b) => a.b2c_price - b.b2c_price
+    ),
+  };
+}

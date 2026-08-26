@@ -53,6 +53,20 @@ export async function getCurrentUser() {
   return { profile, customer: customer ?? null, tier, volumeDiscounts };
 }
 
+/**
+ * Defense-in-depth for admin server actions: RLS already blocks
+ * non-admins at the database layer, but this gives a clean early
+ * return/error before any query runs, and a single place to change
+ * the check.
+ */
+export async function requireAdmin(): Promise<Profile> {
+  const session = await getCurrentUser();
+  if (!session || session.profile.role !== "admin") {
+    throw new Error("Admin access required.");
+  }
+  return session.profile;
+}
+
 /** Adapts DB tier + volume_discounts rows into lib/pricing.ts's plain shape. */
 export function toPricingTier(
   tier: Tier | null,
