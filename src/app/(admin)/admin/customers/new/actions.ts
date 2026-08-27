@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getSiteUrl } from "@/lib/env";
 
 export interface CreateCustomerState {
   error: string | null;
@@ -42,6 +43,7 @@ export async function createCustomer(
     const { data: invited, error: inviteError } =
       await admin.auth.admin.inviteUserByEmail(email, {
         data: { role: "customer", full_name: fullName || companyName },
+        redirectTo: `${getSiteUrl()}/auth/callback`,
       });
     if (inviteError || !invited?.user) {
       return { error: `Failed to invite customer: ${inviteError?.message}` };
