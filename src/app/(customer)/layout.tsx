@@ -26,7 +26,7 @@ export default async function CustomerLayout({
     <QuoteProvider>
       <div className="min-h-screen bg-neutral-50">
         <Nav title="Kakawa B2B" links={CUSTOMER_LINKS} />
-        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+        <main className="mx-auto max-w-6xl px-4 py-6 sm:py-8">{children}</main>
       </div>
     </QuoteProvider>
   );
