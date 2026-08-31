@@ -1,9 +1,21 @@
 "use client";
 
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import { login, type LoginState } from "./actions";
 
 const initialState: LoginState = { error: null };
+
+function RedirectToField() {
+  // Reads ?redirectTo=... set by middleware when a deep link (e.g. a
+  // bookmarked /quote) bounced an unauthenticated visit here, so login()
+  // can send the customer back to it instead of always defaulting to
+  // /catalog.
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo");
+  if (!redirectTo) return null;
+  return <input type="hidden" name="redirectTo" value={redirectTo} />;
+}
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(login, initialState);
@@ -19,6 +31,9 @@ export default function LoginPage() {
         </p>
 
         <form action={formAction} className="mt-6 space-y-4">
+          <Suspense fallback={null}>
+            <RedirectToField />
+          </Suspense>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-neutral-700">
               Email

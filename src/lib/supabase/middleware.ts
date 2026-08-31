@@ -50,7 +50,12 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && (isAdminRoute || isCustomerRoute)) {
+  // Catalog is the customer home page - /dashboard is still a real route,
+  // just not where anyone lands by default.
+  const CUSTOMER_HOME = "/catalog";
+  const ADMIN_HOME = "/admin/dashboard";
+
+  if (user && (isAdminRoute || isCustomerRoute || isAuthRoute)) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
@@ -59,21 +64,20 @@ export async function updateSession(request: NextRequest) {
 
     if (isAdminRoute && profile?.role !== "admin") {
       const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
+      url.pathname = CUSTOMER_HOME;
       return NextResponse.redirect(url);
     }
     if (isCustomerRoute && profile?.role === "admin") {
       // Admins land on the admin console, not the customer portal.
       const url = request.nextUrl.clone();
-      url.pathname = "/admin/dashboard";
+      url.pathname = ADMIN_HOME;
       return NextResponse.redirect(url);
     }
-  }
-
-  if (user && isAuthRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    if (isAuthRoute) {
+      const url = request.nextUrl.clone();
+      url.pathname = profile?.role === "admin" ? ADMIN_HOME : CUSTOMER_HOME;
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { syncShopifyProducts, type ShopifySyncResult } from "@/lib/shopify-sync";
 
 export async function toggleProductVisibility(productId: string, visible: boolean) {
   await requireAdmin();
@@ -17,4 +18,15 @@ export async function toggleProductVisibility(productId: string, visible: boolea
   revalidatePath("/admin/products");
   revalidatePath(`/admin/products/${productId}`);
   revalidatePath("/catalog");
+}
+
+/** Re-runs the same import the Shopify scraper (npm run scrape) does, on demand. */
+export async function syncShopifyCatalog(): Promise<ShopifySyncResult> {
+  await requireAdmin();
+  const result = await syncShopifyProducts();
+
+  revalidatePath("/admin/products");
+  revalidatePath("/catalog");
+
+  return result;
 }

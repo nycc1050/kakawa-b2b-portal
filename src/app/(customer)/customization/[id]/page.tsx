@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getRequest, getLogoSignedUrl } from "@/lib/customization";
 import { StatusBadge } from "@/components/customization/StatusBadge";
+import { CustomizationQuoteLink } from "@/components/customization/CustomizationQuoteLink";
 
 interface RequestDetailPageProps {
   params: Promise<{ id: string }>;
@@ -86,6 +87,8 @@ export default async function RequestDetailPage({
           </div>
         )}
       </dl>
+
+      <CustomizationQuoteLink requestId={request.id} />
 
       {request.admin_notes && (
         <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">

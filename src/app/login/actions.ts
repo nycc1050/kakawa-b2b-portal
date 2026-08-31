@@ -8,6 +8,14 @@ export interface LoginState {
   error: string | null;
 }
 
+/** Only ever redirect somewhere inside our own app - never follow an
+ * absolute/external URL a caller might slip into redirectTo. */
+function safeRedirectTarget(redirectTo: FormDataEntryValue | null): string | null {
+  const value = typeof redirectTo === "string" ? redirectTo : "";
+  if (value.startsWith("/") && !value.startsWith("//")) return value;
+  return null;
+}
+
 export async function login(
   _prevState: LoginState,
   formData: FormData
@@ -20,14 +28,26 @@ export async function login(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     return { error: error.message };
   }
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", data.user.id)
+    .single();
+
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+
+  if (profile?.role === "admin") {
+    redirect("/admin/dashboard");
+  }
+  // Catalog is the customer home page. Honor a deep-link redirect (e.g. a
+  // bookmarked /quote link that bounced through /login) if one was given.
+  redirect(safeRedirectTarget(formData.get("redirectTo")) ?? "/catalog");
 }
 
 export async function logout() {

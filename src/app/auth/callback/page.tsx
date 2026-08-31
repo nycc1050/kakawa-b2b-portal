@@ -100,8 +100,8 @@ export default function AuthCallbackPage() {
 
     // setSession/updateUser above already wrote the session cookies, so
     // the RSC fetch this triggers carries them straight to the guarded
-    // (customer) layout.
-    router.push("/dashboard");
+    // (customer) layout. Catalog is the customer home page.
+    router.push("/catalog");
   }
 
   return (

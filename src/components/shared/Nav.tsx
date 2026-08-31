@@ -6,17 +6,20 @@ import { logout } from "@/app/login/actions";
 
 interface NavProps {
   title: string;
+  homeHref: string;
   links: { href: string; label: string }[];
 }
 
-export function Nav({ title, links }: NavProps) {
+export function Nav({ title, homeHref, links }: NavProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-6">
-          <span className="text-sm font-semibold text-neutral-900">{title}</span>
+          <Link href={homeHref} className="text-sm font-semibold text-neutral-900">
+            {title}
+          </Link>
           <nav className="hidden gap-4 md:flex">
             {links.map((l) => (
               <Link

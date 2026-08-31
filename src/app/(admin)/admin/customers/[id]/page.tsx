@@ -18,6 +18,9 @@ export default async function CustomerDetailPage({ params }: CustomerDetailPageP
 
   if (!customer) notFound();
 
+  const [firstName, ...rest] = (customer.profiles?.full_name ?? "").trim().split(/\s+/);
+  const lastName = rest.join(" ");
+
   return (
     <div>
       <h1 className="text-2xl font-semibold text-neutral-900">
@@ -32,6 +35,8 @@ export default async function CustomerDetailPage({ params }: CustomerDetailPageP
             <EditCustomerForm
               customerId={customer.id}
               companyName={customer.company_name}
+              firstName={firstName || ""}
+              lastName={lastName}
               phone={customer.phone}
               tierId={customer.tier_id}
               tiers={tiers}

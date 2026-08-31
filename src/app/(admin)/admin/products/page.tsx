@@ -1,6 +1,17 @@
 import Link from "next/link";
 import { listAllProductsForAdmin } from "@/lib/products";
 import { VisibilityToggle } from "@/components/admin/VisibilityToggle";
+import { SyncShopifyButton } from "@/components/admin/SyncShopifyButton";
+
+// The Shopify sync action (invoked from SyncShopifyButton below) fetches
+// the full catalog then upserts ~430 rows sequentially - measured at ~76s
+// end-to-end against the live store, well past Vercel's 10s default
+// function timeout. Server Action duration is controlled by the calling
+// route's segment config, not the "use server" file itself. Set as high as
+// Vercel allows; on a plan whose cap is lower, Vercel clamps this down
+// rather than erroring, so there's no harm in asking for more than Hobby's
+// 60s ceiling.
+export const maxDuration = 300;
 
 function priceRange(variants: { b2c_price: number }[]) {
   if (variants.length === 0) return "—";
@@ -15,9 +26,10 @@ export default async function AdminProductsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <h1 className="text-2xl font-semibold text-neutral-900">Products</h1>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-start gap-3">
+          <SyncShopifyButton />
           <Link
             href="/admin/products/csv"
             className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"

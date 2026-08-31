@@ -10,6 +10,25 @@ import {
 
 const COLUMNS = ["title", "sku", "category", "b2c_price", "variant_title", "weight"];
 
+const TEMPLATE_ROWS = [
+  ["18 Pieces Gift Box", "KKW-GB18-DARK", "Gift Box", "45.00", "Dark Chocolate", "260"],
+  ["18 Pieces Gift Box", "KKW-GB18-MILK", "Gift Box", "45.00", "Milk Chocolate", "260"],
+  ["Dark Chocolate Bar 100g", "KKW-BAR-70", "Chocolate Bars", "12.50", "70% Cacao", "100"],
+];
+
+function downloadCsvTemplate() {
+  const lines = [COLUMNS.join(","), ...TEMPLATE_ROWS.map((row) => row.join(","))];
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kakawa-product-template.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 export default function ProductCsvUploadPage() {
   const [rows, setRows] = useState<ProductCsvRow[]>([]);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -51,12 +70,23 @@ export default function ProductCsvUploadPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-neutral-900">Product CSV Upload</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        Columns required: <code>{COLUMNS.join(", ")}</code>. Rows sharing the same{" "}
-        <code>title</code> (case-insensitive) become variants of one product. Existing
-        products are matched by title; variants are matched by SKU when provided.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold text-neutral-900">Product CSV Upload</h1>
+          <p className="mt-1 max-w-xl text-sm text-neutral-500">
+            Columns required: <code>{COLUMNS.join(", ")}</code>. Rows sharing the same{" "}
+            <code>title</code> (case-insensitive) become variants of one product. Existing
+            products are matched by title; variants are matched by SKU when provided.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={downloadCsvTemplate}
+          className="shrink-0 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+        >
+          Download CSV template
+        </button>
+      </div>
 
       <div className="mt-6 max-w-xl">
         <input

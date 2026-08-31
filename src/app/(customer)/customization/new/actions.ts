@@ -80,5 +80,10 @@ export async function submitCustomizationRequest(
     return { error: `Failed to submit request: ${insertError?.message}` };
   }
 
-  redirect(`/customization/${inserted.id}?submitted=1`);
+  // "Include in quote?" is a soft link with no schema change - recorded
+  // client-side (see customization-links.ts) once we land on the detail
+  // page, using the productId/flag carried through this redirect.
+  const includeInQuote = formData.get("includeInQuote") === "yes";
+  const linkParams = includeInQuote ? `&linkedToQuote=1&productId=${productId}` : "";
+  redirect(`/customization/${inserted.id}?submitted=1${linkParams}`);
 }

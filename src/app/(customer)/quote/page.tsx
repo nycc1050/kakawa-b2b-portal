@@ -18,7 +18,6 @@ export default async function QuotePage() {
       <div className="mt-6">
         <QuoteBuilder
           tier={pricingTier}
-          tierName={session?.tier?.name ?? null}
           companyName={session?.customer?.company_name ?? null}
         />
       </div>

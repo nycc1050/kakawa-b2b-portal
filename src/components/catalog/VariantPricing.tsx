@@ -11,7 +11,6 @@ interface VariantPricingProps {
   productImageUrl: string | null;
   variants: ProductVariant[];
   tier: PricingTier | null;
-  tierName: string | null;
 }
 
 export function VariantPricing({
@@ -20,7 +19,6 @@ export function VariantPricing({
   productImageUrl,
   variants,
   tier,
-  tierName,
 }: VariantPricingProps) {
   const { addItem } = useQuote();
   const [variantId, setVariantId] = useState(variants[0]?.id ?? "");
@@ -42,7 +40,7 @@ export function VariantPricing({
       {variants.length > 1 && (
         <div>
           <label className="block text-sm font-medium text-neutral-700">
-            Option
+            Variant
           </label>
           <select
             value={variantId}
@@ -52,7 +50,7 @@ export function VariantPricing({
             {variants.map((v) => (
               <option key={v.id} value={v.id} disabled={!v.is_available}>
                 {(v.variant_title ?? "Standard") +
-                  ` — $${v.b2c_price.toFixed(2)} B2C` +
+                  ` — $${v.b2c_price.toFixed(2)}` +
                   (v.is_available ? "" : " (unavailable)")}
               </option>
             ))}
@@ -103,7 +101,7 @@ export function VariantPricing({
       {tier ? (
         <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
           <p className="text-xs uppercase tracking-wide text-neutral-400">
-            {tierName} pricing
+            Your wholesale pricing
           </p>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-2xl font-semibold text-neutral-900">
@@ -113,11 +111,11 @@ export function VariantPricing({
           </div>
           <dl className="mt-3 space-y-1 text-sm text-neutral-600">
             <div className="flex justify-between">
-              <dt>B2C price</dt>
+              <dt>Reference price</dt>
               <dd>${variant.b2c_price.toFixed(2)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt>Tier discount</dt>
+              <dt>Wholesale discount</dt>
               <dd>-{Math.round((breakdown?.tierDiscountPercent ?? 0) * 100)}%</dd>
             </div>
             <div className="flex justify-between">
@@ -140,8 +138,8 @@ export function VariantPricing({
         </div>
       ) : (
         <p className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          You don&apos;t have a pricing tier assigned yet — contact Kakawa to get
-          set up. Showing B2C reference pricing only.
+          You don&apos;t have wholesale pricing set up yet — contact Kakawa to
+          get set up. Showing reference pricing only.
         </p>
       )}
     </div>

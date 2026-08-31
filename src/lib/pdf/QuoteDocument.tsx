@@ -6,11 +6,12 @@ export interface QuotePdfLineItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  /** Set when the customer linked a customization request to this line item. */
+  customizationReference?: string;
 }
 
 export interface QuoteDocumentProps {
   companyName: string;
-  tierName: string;
   quoteDate: string; // pre-formatted, e.g. "24 Aug 2026"
   validUntil: string; // pre-formatted
   items: QuotePdfLineItem[];
@@ -87,7 +88,6 @@ const fmt = (n: number) => `$${n.toFixed(2)}`;
 
 export function QuoteDocument({
   companyName,
-  tierName,
   quoteDate,
   validUntil,
   items,
@@ -109,15 +109,9 @@ export function QuoteDocument({
           </View>
         </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>Prepared for</Text>
-            <Text style={styles.sectionValue}>{companyName}</Text>
-          </View>
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>Pricing tier</Text>
-            <Text style={styles.sectionValue}>{tierName}</Text>
-          </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Prepared for</Text>
+          <Text style={styles.sectionValue}>{companyName}</Text>
         </View>
 
         <View style={styles.table}>
@@ -135,6 +129,7 @@ export function QuoteDocument({
               <Text style={styles.colProduct}>
                 {item.productTitle}
                 {item.variantTitle ? ` — ${item.variantTitle}` : ""}
+                {item.customizationReference ? ` (Ref: ${item.customizationReference})` : ""}
               </Text>
               <Text style={styles.colQty}>{item.quantity}</Text>
               <Text style={styles.colUnit}>{fmt(item.unitPrice)}</Text>

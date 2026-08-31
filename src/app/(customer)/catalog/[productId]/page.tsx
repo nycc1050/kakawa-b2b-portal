@@ -45,12 +45,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         <div>
-          {product.category && (
-            <span className="text-xs uppercase tracking-wide text-neutral-400">
-              {product.category}
-            </span>
-          )}
-          <h1 className="mt-1 text-2xl font-semibold text-neutral-900">
+          <h1 className="text-2xl font-semibold text-neutral-900">
             {product.title}
           </h1>
           {product.description && (
@@ -64,7 +59,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
               productImageUrl={product.image_url}
               variants={product.product_variants}
               tier={pricingTier}
-              tierName={session?.tier?.name ?? null}
             />
           </div>
 

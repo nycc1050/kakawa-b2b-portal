@@ -1,0 +1,104 @@
+<!--
+  Kakawa B2B Portal — invite email template.
+
+  Where to paste this: Supabase Dashboard → Authentication → Emails →
+  Templates → "Invite user" → replace the Message body with this file's
+  contents, save.
+
+  This can only be applied via the dashboard (or the Management API with a
+  personal access token) — there's no way to set it from application code
+  or the service_role key, so it isn't something this repo can apply for
+  you automatically.
+
+  Template variables used below are Supabase's own (Go-template) syntax:
+    {{ .ConfirmationURL }} — the invite accept link (points at our
+                             /auth/callback per the redirectTo we pass to
+                             inviteUserByEmail - do not change this part)
+    {{ .Data.full_name }}  — the full_name we pass as `data` when inviting
+                             (falls back to "there" if it's ever blank)
+    {{ .Email }}           — the invited address, shown nowhere here but
+                             available if needed later
+
+  If your Supabase project's mailer doesn't support the .Data.* lookup
+  (older projects sometimes don't), replace the {{if .Data.full_name}}...
+  {{end}} block below with a plain "Hi there,".
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome to Kakawa B2B Portal</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f2ede5; font-family:Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f2ede5; padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px; background-color:#ffffff; border-radius:8px; overflow:hidden;">
+
+          <!-- Header / brand -->
+          <tr>
+            <td style="background-color:#4a2c17; padding:28px 32px;">
+              <span style="font-size:20px; font-weight:700; color:#ffffff; letter-spacing:0.02em;">Kakawa Chocolates</span>
+              <br>
+              <span style="font-size:11px; font-weight:600; color:#e0b980; text-transform:uppercase; letter-spacing:0.08em;">Wholesale &amp; Corporate Portal</span>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px;">
+              <p style="margin:0 0 16px; font-size:15px; line-height:1.6; color:#2b2016;">
+                {{if .Data.full_name}}Hi {{ .Data.full_name }},{{else}}Hi there,{{end}}
+              </p>
+              <p style="margin:0 0 24px; font-size:15px; line-height:1.6; color:#2b2016;">
+                You&rsquo;ve been invited to access the Kakawa B2B Wholesale Portal.
+              </p>
+
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+                <tr>
+                  <td style="border-radius:6px; background-color:#4a2c17;">
+                    <a href="{{ .ConfirmationURL }}" style="display:inline-block; padding:13px 28px; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none; border-radius:6px;">
+                      Accept invitation &amp; set your password
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 12px; font-size:14px; line-height:1.6; color:#5b4c3d;">
+                Once you&rsquo;re in, you&rsquo;ll be able to:
+              </p>
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 24px; width:100%;">
+                <tr><td style="padding:4px 0; font-size:14px; line-height:1.5; color:#2b2016;">&bull;&nbsp; Browse our wholesale product catalog</td></tr>
+                <tr><td style="padding:4px 0; font-size:14px; line-height:1.5; color:#2b2016;">&bull;&nbsp; Build custom quotes with your wholesale pricing</td></tr>
+                <tr><td style="padding:4px 0; font-size:14px; line-height:1.5; color:#2b2016;">&bull;&nbsp; Submit customization requests &mdash; logos, colors, embossing, and more</td></tr>
+                <tr><td style="padding:4px 0; font-size:14px; line-height:1.5; color:#2b2016;">&bull;&nbsp; Track the status of every customization request</td></tr>
+              </table>
+
+              <p style="margin:0 0 4px; font-size:13px; line-height:1.6; color:#8b7c6c;">
+                This link is valid for a limited time. If it&rsquo;s expired by the time you click it, just ask us and we&rsquo;ll send a new one.
+              </p>
+              <p style="margin:20px 0 0; font-size:14px; line-height:1.6; color:#2b2016;">
+                Questions? Email us at <a href="mailto:info@kakawachocolates.com.au" style="color:#9c6e22;">info@kakawachocolates.com.au</a>.
+              </p>
+              <p style="margin:20px 0 0; font-size:14px; line-height:1.6; color:#2b2016;">
+                Best regards,<br>The Kakawa Team
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:18px 32px; background-color:#f7f4ee; border-top:1px solid #e4ddd0;">
+              <p style="margin:0; font-size:11px; line-height:1.5; color:#8b7c6c;">
+                Kakawa Chocolates &middot; kakawachocolates.com.au
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

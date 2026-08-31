@@ -107,6 +107,18 @@ export function RequestForm({ products, preselectedProductId }: RequestFormProps
         />
       </div>
 
+      <label className="flex items-start gap-2 rounded-md border border-neutral-200 bg-neutral-50 p-3 text-sm text-neutral-700">
+        <input type="checkbox" name="includeInQuote" value="yes" className="mt-0.5" />
+        <span>
+          Include in quote?
+          <span className="mt-0.5 block text-xs text-neutral-500">
+            Generates a reference number and flags this request on your Quote
+            page, so Kakawa can see the two go together. Optional - doesn&apos;t
+            change how the request itself is handled.
+          </span>
+        </span>
+      </label>
+
       {state.error && (
         <p className="text-sm text-red-600" role="alert">
           {state.error}

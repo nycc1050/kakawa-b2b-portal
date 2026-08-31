@@ -22,7 +22,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      <Nav title="Kakawa Admin" links={ADMIN_LINKS} />
+      <Nav title="Kakawa Admin" homeHref="/admin/dashboard" links={ADMIN_LINKS} />
       <main className="mx-auto max-w-6xl px-4 py-6 sm:py-8">{children}</main>
     </div>
   );

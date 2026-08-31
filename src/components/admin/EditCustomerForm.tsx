@@ -10,6 +10,8 @@ import type { Tier } from "@/types/database";
 interface EditCustomerFormProps {
   customerId: string;
   companyName: string;
+  firstName: string;
+  lastName: string;
   phone: string | null;
   tierId: string | null;
   tiers: Tier[];
@@ -20,6 +22,8 @@ const initialState: UpdateCustomerState = { error: null, success: false };
 export function EditCustomerForm({
   customerId,
   companyName,
+  firstName,
+  lastName,
   phone,
   tierId,
   tiers,
@@ -42,6 +46,30 @@ export function EditCustomerForm({
           required
           className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
         />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700">
+            First name
+          </label>
+          <input
+            id="firstName"
+            name="firstName"
+            defaultValue={firstName}
+            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label htmlFor="lastName" className="block text-sm font-medium text-neutral-700">
+            Last name
+          </label>
+          <input
+            id="lastName"
+            name="lastName"
+            defaultValue={lastName}
+            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+          />
+        </div>
       </div>
       <div>
         <label htmlFor="phone" className="block text-sm font-medium text-neutral-700">
